@@ -8,4 +8,4 @@ Qss reference:
 
 2. Q: right way to use external library
 
-A: use `INCLUDEPATH += library_header_path` and `LIBS += -Lbinarydirpath -llibname`.
+A: use `INCLUDEPATH += library_header_path` and `LIBS += -Lbinarydir -llibname`.
