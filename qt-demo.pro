@@ -18,13 +18,18 @@ INCLUDEPATH += .
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS += viewdelegate.h \
-            mainwindow.h \
-            listview.h \
-            thread.h
+HEADERS += \
+        graphotowidget.h \
+        listview.h \
+        mainwindow.h \
+        thread.h \
+        viewdelegate.h \
 
 
-SOURCES += main.cpp viewdelegate.cpp \
-            mainwindow.cc \
-            listview.cc \
-            thread.cc
+SOURCES += \
+        graphotowidget.cc \
+        listview.cc \
+        main.cpp  \
+        mainwindow.cc \
+        thread.cc \
+        viewdelegate.cpp \

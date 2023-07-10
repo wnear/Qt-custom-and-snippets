@@ -2,9 +2,11 @@
 #include "viewdelegate.h"
 
 #include "listview.h"
+#include "graphotowidget.h"
+
 
 MainWindow::MainWindow() : QMainWindow(nullptr) {
-    this->setCentralWidget(new ListWidget(this));
+    this->setCentralWidget(new GraphotoWidget(this));
 
 }
 
