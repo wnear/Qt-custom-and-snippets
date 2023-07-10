@@ -7,7 +7,7 @@ QT += widgets
 config += qt
 
 TEMPLATE = app
-TARGET = delegate-demo
+TARGET = qt-demo
 INCLUDEPATH += .
 
 # You can make your code fail to compile if you use deprecated APIs.
@@ -20,7 +20,11 @@ INCLUDEPATH += .
 # Input
 HEADERS += viewdelegate.h \
             mainwindow.h \
+            listview.h \
+            thread.h
 
 
 SOURCES += main.cpp viewdelegate.cpp \
             mainwindow.cc \
+            listview.cc \
+            thread.cc
