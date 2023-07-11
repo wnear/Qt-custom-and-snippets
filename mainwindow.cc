@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "viewdelegate.h"
 
-#include "listview.h"
+#include "listwidget.h"
 #include "graphotowidget.h"
 
 

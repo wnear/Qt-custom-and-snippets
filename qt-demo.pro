@@ -5,6 +5,7 @@
 QT += widgets
 
 config += qt
+CONFIG += debug_and_release
 
 TEMPLATE = app
 TARGET = qt-demo
@@ -20,7 +21,7 @@ INCLUDEPATH += .
 # Input
 HEADERS += \
         graphotowidget.h \
-        listview.h \
+        listwidget.h \
         mainwindow.h \
         thread.h \
         viewdelegate.h \
@@ -28,7 +29,7 @@ HEADERS += \
 
 SOURCES += \
         graphotowidget.cc \
-        listview.cc \
+        listwidget.cc \
         main.cpp  \
         mainwindow.cc \
         thread.cc \
