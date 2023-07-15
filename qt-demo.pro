@@ -36,10 +36,10 @@ HEADERS += \
 SOURCES += \
         graphotowidget.cc \
         listwidget.cc \
-        main.cpp  \
+        main.cc  \
         mainwindow.cc \
         thread.cc \
-        viewdelegate.cpp \
+        viewdelegate.cc \
         textbrowser.cc \
         treewidget.cc \
         treemodel.cc \

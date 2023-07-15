@@ -13,6 +13,7 @@ MainWindow::MainWindow() : QMainWindow(nullptr) {
     this->setCentralWidget(new TextBrowser(this));
     // Regex::test();
     // this->setCentralWidget(new TreeWidget(this));
+    // this->setCentralWidget(new TextBrowser(this));
 
 }
 
