@@ -26,6 +26,11 @@ HEADERS += \
         thread.h \
         viewdelegate.h \
         textbrowser.h \
+        treewidget.h \
+        treemodel.h \
+        treeitem.h \
+        dataitem.h \
+        regex.h \
 
 
 SOURCES += \
@@ -36,3 +41,8 @@ SOURCES += \
         thread.cc \
         viewdelegate.cpp \
         textbrowser.cc \
+        treewidget.cc \
+        treemodel.cc \
+        treeitem.cc \
+        dataitem.cc \
+        regex.cc \
