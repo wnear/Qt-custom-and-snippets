@@ -32,6 +32,7 @@ class GraphotoWidget : public QWidget {
   public:
     GraphotoWidget(QWidget *parent = nullptr);
     void setScale(float incr);
+    void reset();
 
   private:
     float m_scale = 1.0;

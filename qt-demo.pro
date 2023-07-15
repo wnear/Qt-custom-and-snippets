@@ -25,6 +25,7 @@ HEADERS += \
         mainwindow.h \
         thread.h \
         viewdelegate.h \
+        textbrowser.h \
 
 
 SOURCES += \
@@ -34,3 +35,4 @@ SOURCES += \
         mainwindow.cc \
         thread.cc \
         viewdelegate.cpp \
+        textbrowser.cc \

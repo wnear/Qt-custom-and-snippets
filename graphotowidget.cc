@@ -13,9 +13,7 @@ PhotoItem::PhotoItem(QGraphicsItem *parent) : QGraphicsObject(parent) {
 
 void PhotoItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                       QWidget *widget) {
-    auto old = m_pixmap.rect();
-    painter->drawPixmap({0, 0, old.width(), old.height()}, m_pixmap);
-    // painter->scale(0.5, 0.5);
+    painter->drawPixmap(m_pixmap.rect(), m_pixmap);
 }
 
 void PhotoItem::setImage(const QString &file) { assert(0); }
@@ -47,11 +45,14 @@ class GraphicsView : public QGraphicsView {
 };
 
 //TODO:
+//0. auto scale. (scale to best view.)
+//  1.1 size with value.
+//  1.2 size with hidth/weight of item.
+//0. draw frame and shadow around the single page.
 //1. use item as layoutitem, (two-page, or continuous mode)
 //2. put qwidget in view. (e.g. put qtext, in qgraphics)
-//3. auto scale. (scale to best view.)
 //4. drag item. (look around)
-//5.parent-item relationship's existence.
+//5. parent-item relationship's existence.
 //
 GraphotoWidget::GraphotoWidget(QWidget *parent) : QWidget(parent) {
     this->setLayout(new QVBoxLayout);
@@ -113,5 +114,9 @@ GraphotoWidget::GraphotoWidget(QWidget *parent) : QWidget(parent) {
 void GraphotoWidget::setScale(float incr) {
     m_scale += incr;
     if (m_scale < 0.1) m_scale = 0.1;
+}
+
+void GraphotoWidget::reset() {
+
 }
 
