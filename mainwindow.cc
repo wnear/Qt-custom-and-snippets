@@ -9,8 +9,8 @@
 
 
 MainWindow::MainWindow() : QMainWindow(nullptr) {
-    // this->setCentralWidget(new GraphotoWidget(this));
-    this->setCentralWidget(new TextBrowser(this));
+    this->setCentralWidget(new GraphotoWidget(this));
+    // this->setCentralWidget(new TextBrowser(this));
     // Regex::test();
     // this->setCentralWidget(new TreeWidget(this));
     // this->setCentralWidget(new TextBrowser(this));

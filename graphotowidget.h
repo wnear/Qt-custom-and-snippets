@@ -14,7 +14,16 @@ class PhotoItem : public QGraphicsObject {
     QRectF boundingRect() const override;
     void setImage(const QString &file);
     void next();
+    int shadowPadding()const {
+        return m_padding_shadow;
+    }
     void prev();
+    double getScale();
+    void recalScale();
+    void setBoardSize(QSize val);
+    void setBoardBackground(const QColor &color){
+        m_board_bgcolor = color;
+    }
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget = nullptr) override;
 
@@ -22,18 +31,42 @@ class PhotoItem : public QGraphicsObject {
     void photoChanged();
 
   private:
+    double m_scale{1.0};
+    double m_scaleMax{2.0};
     int m_index{0};
+    QSize m_board_size;
+    QColor m_board_bgcolor;
+
+    int m_padding_shadow = 4;
     QFileInfoList m_filelist{};
     QPixmap m_pixmap;
+};
+
+class GraphicsView : public QGraphicsView {
+  public:
+    using QGraphicsView::QGraphicsView;
+
+  protected:
+    // void resizeEvent(QResizeEvent *) override
+    // {}
 };
 
 class GraphotoWidget : public QWidget {
     Q_OBJECT
   public:
     GraphotoWidget(QWidget *parent = nullptr);
+    void autoscale();
     void setScale(float incr);
-    void reset();
+    QSize boardSize() const;
+    void displayInfo() const;
 
   private:
+    QGraphicsScene *m_scene{nullptr};
+    GraphicsView *m_view{nullptr};
+    PhotoItem *m_photoItem{nullptr};
+
+    int m_padding_topbottom = 8;
+    int m_padding_leftright = 8;
     float m_scale = 1.0;
+    const int m_padding = 0;
 };
