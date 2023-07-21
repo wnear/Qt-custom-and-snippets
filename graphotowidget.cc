@@ -4,10 +4,13 @@
 #include <QPushButton>
 #include <QDir>
 #include <QDebug>
-
 #include <QCoreApplication>
+
+
+//FIX: when move item, the frame and shadow is out of view, couldn't see.
+//
 PhotoItem::PhotoItem(QGraphicsItem *parent) : QGraphicsObject(parent) {
-    this->setFlags(QGraphicsItem::ItemIsMovable);
+    // this->setFlags(QGraphicsItem::ItemIsMovable);
     m_filelist = QDir("/home/bill/Pictures").entryInfoList({"*.png", "*.jpg"});
     next();
 }
@@ -103,13 +106,16 @@ QRectF PhotoItem::boundingRect() const { return m_pixmap.rect(); }
 
 // TODO:
 // 0. auto scale. (scale to best view.)
-//   1.1 size with value.
-//   1.2 size with hidth/weight of item.
-// 1. draw frame and shadow around the single page.
-// 1. use item as layoutitem, (two-page, or continuous mode)
-// 2. put qwidget in view. (e.g. put qtext, in qgraphics)
-// 4. drag item. (look around)
-// 5. parent-item relationship's existence.
+//   0. size with value.
+//   1. size with hidth/weight of item.
+// 0. draw frame and shadow around the single page.
+// x. use item as layoutitem, (two-page, or continuous mode)
+// x. put qwidget in view. (e.g. put qtext, in qgraphics)
+// 0. drag item. (look around)
+// 1. parent-item relationship's existence.
+//   0. setPos.
+// 1. two-page
+// 2. continuous page.
 //
 GraphotoWidget::GraphotoWidget(QWidget *parent) : QWidget(parent) {
     this->setLayout(new QVBoxLayout);
@@ -126,6 +132,7 @@ GraphotoWidget::GraphotoWidget(QWidget *parent) : QWidget(parent) {
     m_view = new GraphicsView(m_scene);
     m_view->setRenderHint(QPainter::Antialiasing);
     m_view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+    m_view->setDragMode(QGraphicsView::ScrollHandDrag);
     m_view->setBackgroundBrush(QColor(230, 200, 167));
     m_view->setWindowTitle("Drag and Drop Robot");
     m_view->show();
@@ -136,10 +143,7 @@ GraphotoWidget::GraphotoWidget(QWidget *parent) : QWidget(parent) {
     m_photoItem->recalScale();
     qDebug() << __LINE__;
     displayInfo();
-    // TODO:
-    // set item Screen size.
 
-    qDebug() << m_view->backgroundBrush().color();
     autoscale();
 
     {
@@ -150,15 +154,11 @@ GraphotoWidget::GraphotoWidget(QWidget *parent) : QWidget(parent) {
         auto btn2 = new QPushButton("prev");
         auto btn3 = new QPushButton("zoom-in");
         auto btn4 = new QPushButton("zoom-out");
-        // auto btn5 = new QPushButton("fit-1");
-        // auto btn6 = new QPushButton("fit-2");
 
         lay->addWidget(btn1);
         lay->addWidget(btn2);
         lay->addWidget(btn3);
         lay->addWidget(btn4);
-        // lay->addWidget(btn5);
-        // lay->addWidget(btn6);
         connect(btn1, &QPushButton::clicked, m_photoItem, &PhotoItem::next);
         connect(btn2, &QPushButton::clicked, m_photoItem, &PhotoItem::prev);
         connect(m_photoItem, &PhotoItem::photoChanged, this, &GraphotoWidget::autoscale);
@@ -178,6 +178,7 @@ void GraphotoWidget::setScale(float incr) {
 }
 
 void GraphotoWidget::autoscale() {
+    m_photoItem->setPos(0, 0);
     auto itemsize = m_photoItem->boundingRect();
     auto s = m_photoItem->getScale();
     m_scene->setSceneRect(itemsize);

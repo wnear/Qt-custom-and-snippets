@@ -37,7 +37,7 @@ class PhotoItem : public QGraphicsObject {
     QSize m_board_size;
     QColor m_board_bgcolor;
 
-    int m_padding_shadow = 4;
+    int m_padding_shadow = 6;
     QFileInfoList m_filelist{};
     QPixmap m_pixmap;
 };
