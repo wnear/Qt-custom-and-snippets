@@ -1,4 +1,4 @@
-#include "graphotowidget.h"
+#include "graphicspageview.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -9,13 +9,13 @@
 
 //FIX: when move item, the frame and shadow is out of view, couldn't see.
 //
-PhotoItem::PhotoItem(QGraphicsItem *parent) : QGraphicsObject(parent) {
+PageItem::PageItem(QGraphicsItem *parent) : QGraphicsObject(parent) {
     // this->setFlags(QGraphicsItem::ItemIsMovable);
     m_filelist = QDir("/home/bill/Pictures").entryInfoList({"*.png", "*.jpg"});
     next();
 }
 
-void PhotoItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+void PageItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                       QWidget *widget) {
     painter->drawPixmap(m_pixmap.rect(), m_pixmap);
 
@@ -56,9 +56,9 @@ void PhotoItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     // painter->drawRect(m_pixmap.rect());
 }
 
-void PhotoItem::setBoardSize(QSize val) { m_board_size = val; }
+void PageItem::setBoardSize(QSize val) { m_board_size = val; }
 
-void PhotoItem::recalScale() {
+void PageItem::recalScale() {
     auto itemsize = this->boundingRect();
 
     auto w = itemsize.width();
@@ -80,11 +80,11 @@ void PhotoItem::recalScale() {
     m_scale = s;
 }
 
-double PhotoItem::getScale() { return m_scale; }
+double PageItem::getScale() { return m_scale; }
 
-void PhotoItem::setImage(const QString &file) { assert(0); }
+void PageItem::setImage(const QString &file) { assert(0); }
 
-void PhotoItem::next() {
+void PageItem::next() {
     m_index++;
     if (m_index == m_filelist.size()) m_index = 0;
     m_pixmap = QPixmap::fromImage(QImage(m_filelist[m_index].absoluteFilePath()));
@@ -93,7 +93,7 @@ void PhotoItem::next() {
     emit photoChanged();
 }
 
-void PhotoItem::prev() {
+void PageItem::prev() {
     m_index--;
     if (m_index == -1) m_index = m_filelist.size() - 1;
     m_pixmap = QPixmap::fromImage(QImage(m_filelist[m_index].absoluteFilePath()));
@@ -102,7 +102,7 @@ void PhotoItem::prev() {
     emit photoChanged();
 }
 
-QRectF PhotoItem::boundingRect() const { return m_pixmap.rect(); }
+QRectF PageItem::boundingRect() const { return m_pixmap.rect(); }
 
 // TODO:
 // 0. auto scale. (scale to best view.)
@@ -117,10 +117,10 @@ QRectF PhotoItem::boundingRect() const { return m_pixmap.rect(); }
 // 1. two-page
 // 2. continuous page.
 //
-GraphotoWidget::GraphotoWidget(QWidget *parent) : QWidget(parent) {
+GraphicsPageView::GraphicsPageView(QWidget *parent) : QWidget(parent) {
     this->setLayout(new QVBoxLayout);
 
-    m_photoItem = new PhotoItem;
+    m_photoItem = new PageItem;
     m_photoItem->setPos(0, 0);
 
     m_scene = new QGraphicsScene(0, 0, 400, 400);
@@ -159,9 +159,9 @@ GraphotoWidget::GraphotoWidget(QWidget *parent) : QWidget(parent) {
         lay->addWidget(btn2);
         lay->addWidget(btn3);
         lay->addWidget(btn4);
-        connect(btn1, &QPushButton::clicked, m_photoItem, &PhotoItem::next);
-        connect(btn2, &QPushButton::clicked, m_photoItem, &PhotoItem::prev);
-        connect(m_photoItem, &PhotoItem::photoChanged, this, &GraphotoWidget::autoscale);
+        connect(btn1, &QPushButton::clicked, m_photoItem, &PageItem::next);
+        connect(btn2, &QPushButton::clicked, m_photoItem, &PageItem::prev);
+        connect(m_photoItem, &PageItem::photoChanged, this, &GraphicsPageView::autoscale);
 
         connect(btn3, &QAbstractButton::clicked, this,
                 [this]() { m_view->scale(1.1, 1.1); });
@@ -172,12 +172,12 @@ GraphotoWidget::GraphotoWidget(QWidget *parent) : QWidget(parent) {
     this->layout()->addWidget(m_view);
 }
 
-void GraphotoWidget::setScale(float incr) {
+void GraphicsPageView::setScale(float incr) {
     m_scale += incr;
     if (m_scale < 0.1) m_scale = 0.1;
 }
 
-void GraphotoWidget::autoscale() {
+void GraphicsPageView::autoscale() {
     m_photoItem->setPos(0, 0);
     auto itemsize = m_photoItem->boundingRect();
     auto s = m_photoItem->getScale();
@@ -188,7 +188,7 @@ void GraphotoWidget::autoscale() {
     m_photoItem->setBoardSize(boardSize());
 }
 
-void GraphotoWidget::displayInfo() const {
+void GraphicsPageView::displayInfo() const {
     auto crec = m_view->contentsRect();
     auto rect = m_view->rect();
     auto size = m_view->size();
@@ -197,7 +197,7 @@ void GraphotoWidget::displayInfo() const {
     qDebug() << QString("size:") << size;
 }
 
-QSize GraphotoWidget::boardSize() const {
+QSize GraphicsPageView::boardSize() const {
     return {m_view->contentsRect().width() - 2 * m_padding_leftright,
             m_view->contentsRect().height() - 2 * m_padding_topbottom
 

@@ -6,10 +6,10 @@
 #include <QGraphicsScene>
 #include <QFileInfo>
 
-class PhotoItem : public QGraphicsObject {
+class PageItem : public QGraphicsObject {
     Q_OBJECT
   public:
-    PhotoItem(QGraphicsItem *parent = nullptr);
+    PageItem(QGraphicsItem *parent = nullptr);
 
     QRectF boundingRect() const override;
     void setImage(const QString &file);
@@ -51,10 +51,10 @@ class GraphicsView : public QGraphicsView {
     // {}
 };
 
-class GraphotoWidget : public QWidget {
+class GraphicsPageView : public QWidget {
     Q_OBJECT
   public:
-    GraphotoWidget(QWidget *parent = nullptr);
+    GraphicsPageView(QWidget *parent = nullptr);
     void autoscale();
     void setScale(float incr);
     QSize boardSize() const;
@@ -63,7 +63,7 @@ class GraphotoWidget : public QWidget {
   private:
     QGraphicsScene *m_scene{nullptr};
     GraphicsView *m_view{nullptr};
-    PhotoItem *m_photoItem{nullptr};
+    PageItem *m_photoItem{nullptr};
 
     int m_padding_topbottom = 8;
     int m_padding_leftright = 8;
