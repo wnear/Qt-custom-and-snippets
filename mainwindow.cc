@@ -6,10 +6,12 @@
 #include "textbrowser.h"
 #include "treewidget.h"
 #include "regex.h"
+#include "youdao.h"
 
 
 MainWindow::MainWindow() : QMainWindow(nullptr) {
-    this->setCentralWidget(new GraphicsPageView(this));
+    // this->setCentralWidget(new GraphicsPageView(this));
+    YouDaoApi::test();
     // this->setCentralWidget(new TextBrowser(this));
     // Regex::test();
     // this->setCentralWidget(new TreeWidget(this));
