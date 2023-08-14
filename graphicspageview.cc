@@ -11,8 +11,6 @@
 //
 PageItem::PageItem(QGraphicsItem *parent) : QGraphicsObject(parent) {
     // this->setFlags(QGraphicsItem::ItemIsMovable);
-    m_filelist = QDir("/home/bill/Pictures").entryInfoList({"*.png", "*.jpg"});
-    next();
 }
 
 void PageItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
@@ -82,25 +80,13 @@ void PageItem::recalScale() {
 
 double PageItem::getScale() { return m_scale; }
 
-void PageItem::setImage(const QString &file) { assert(0); }
-
-void PageItem::next() {
-    m_index++;
-    if (m_index == m_filelist.size()) m_index = 0;
-    m_pixmap = QPixmap::fromImage(QImage(m_filelist[m_index].absoluteFilePath()));
+void PageItem::setImage(const QPixmap &pix) {
+    m_pixmap = pix;
     recalScale();
     assert(!m_pixmap.isNull());
     emit photoChanged();
 }
 
-void PageItem::prev() {
-    m_index--;
-    if (m_index == -1) m_index = m_filelist.size() - 1;
-    m_pixmap = QPixmap::fromImage(QImage(m_filelist[m_index].absoluteFilePath()));
-    recalScale();
-    assert(!m_pixmap.isNull());
-    emit photoChanged();
-}
 
 QRectF PageItem::boundingRect() const { return m_pixmap.rect(); }
 
@@ -117,11 +103,13 @@ QRectF PageItem::boundingRect() const { return m_pixmap.rect(); }
 // 1. two-page
 // 2. continuous page.
 //
-GraphicsPageView::GraphicsPageView(QWidget *parent) : QWidget(parent) {
+PageView::PageView(QWidget *parent) : QWidget(parent) {
     this->setLayout(new QVBoxLayout);
 
     m_photoItem = new PageItem;
     m_photoItem->setPos(0, 0);
+    m_filelist = QDir("/home/bill/Pictures").entryInfoList({"*.png", "*.jpg"});
+    next();
 
     m_scene = new QGraphicsScene(0, 0, 400, 400);
     m_scene->addItem(m_photoItem);
@@ -129,7 +117,7 @@ GraphicsPageView::GraphicsPageView(QWidget *parent) : QWidget(parent) {
     m_photoItem->setPos(0, 0);
     // scene->addText("hello world");
 
-    m_view = new GraphicsView(m_scene);
+    m_view = new QGraphicsView(m_scene);
     m_view->setRenderHint(QPainter::Antialiasing);
     m_view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     m_view->setDragMode(QGraphicsView::ScrollHandDrag);
@@ -150,34 +138,34 @@ GraphicsPageView::GraphicsPageView(QWidget *parent) : QWidget(parent) {
         auto widget = new QWidget;
         auto lay = new QHBoxLayout(widget);
         this->layout()->addWidget(widget);
-        auto btn1 = new QPushButton("next");
-        auto btn2 = new QPushButton("prev");
-        auto btn3 = new QPushButton("zoom-in");
-        auto btn4 = new QPushButton("zoom-out");
+        auto btn_next = new QPushButton("next");
+        auto btn_previous = new QPushButton("prev");
+        auto btn_zoom_smaller = new QPushButton("zoom-in");
+        auto btn_zoom_bigger = new QPushButton("zoom-out");
 
-        lay->addWidget(btn1);
-        lay->addWidget(btn2);
-        lay->addWidget(btn3);
-        lay->addWidget(btn4);
-        connect(btn1, &QPushButton::clicked, m_photoItem, &PageItem::next);
-        connect(btn2, &QPushButton::clicked, m_photoItem, &PageItem::prev);
-        connect(m_photoItem, &PageItem::photoChanged, this, &GraphicsPageView::autoscale);
+        lay->addWidget(btn_next);
+        lay->addWidget(btn_previous);
+        lay->addWidget(btn_zoom_smaller);
+        lay->addWidget(btn_zoom_bigger);
+        connect(btn_next, &QPushButton::clicked, this, &PageView::next);
+        connect(btn_previous, &QPushButton::clicked, this, &PageView::prev);
+        connect(m_photoItem, &PageItem::photoChanged, this, &PageView::autoscale);
 
-        connect(btn3, &QAbstractButton::clicked, this,
+        connect(btn_zoom_smaller, &QAbstractButton::clicked, this,
                 [this]() { m_view->scale(1.1, 1.1); });
-        connect(btn4, &QAbstractButton::clicked, this,
+        connect(btn_zoom_bigger, &QAbstractButton::clicked, this,
                 [this]() { m_view->scale(0.9, 0.9); });
     }
 
     this->layout()->addWidget(m_view);
 }
 
-void GraphicsPageView::setScale(float incr) {
+void PageView::setScale(float incr) {
     m_scale += incr;
     if (m_scale < 0.1) m_scale = 0.1;
 }
 
-void GraphicsPageView::autoscale() {
+void PageView::autoscale() {
     m_photoItem->setPos(0, 0);
     auto itemsize = m_photoItem->boundingRect();
     auto s = m_photoItem->getScale();
@@ -188,7 +176,7 @@ void GraphicsPageView::autoscale() {
     m_photoItem->setBoardSize(boardSize());
 }
 
-void GraphicsPageView::displayInfo() const {
+void PageView::displayInfo() const {
     auto crec = m_view->contentsRect();
     auto rect = m_view->rect();
     auto size = m_view->size();
@@ -197,9 +185,24 @@ void GraphicsPageView::displayInfo() const {
     qDebug() << QString("size:") << size;
 }
 
-QSize GraphicsPageView::boardSize() const {
+QSize PageView::boardSize() const {
     return {m_view->contentsRect().width() - 2 * m_padding_leftright,
             m_view->contentsRect().height() - 2 * m_padding_topbottom
-
     };
 }
+void PageView::next() {
+    m_index++;
+    if (m_index == m_filelist.size()) m_index = 0;
+    m_pixmap = QPixmap::fromImage(QImage(m_filelist[m_index].absoluteFilePath()));
+    m_photoItem->setImage(m_pixmap);
+    assert(!m_pixmap.isNull());
+}
+
+void PageView::prev() {
+    m_index--;
+    if (m_index == -1) m_index = m_filelist.size() - 1;
+    m_pixmap = QPixmap::fromImage(QImage(m_filelist[m_index].absoluteFilePath()));
+    m_photoItem->setImage(m_pixmap);
+    assert(!m_pixmap.isNull());
+}
+
