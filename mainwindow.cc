@@ -10,8 +10,8 @@
 
 
 MainWindow::MainWindow() : QMainWindow(nullptr) {
-    // this->setCentralWidget(new GraphicsPageView(this));
-    YouDaoApi::test();
+    this->setCentralWidget(new PageView(this));
+    // YouDaoApi::test();
     // this->setCentralWidget(new TextBrowser(this));
     // Regex::test();
     // this->setCentralWidget(new TreeWidget(this));
