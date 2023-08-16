@@ -5,6 +5,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QFileInfo>
+#include <QGraphicsDropShadowEffect>
 
 class PageItem : public QGraphicsObject {
     Q_OBJECT
@@ -35,6 +36,8 @@ class PageItem : public QGraphicsObject {
     double m_scaleMax{2.0};
     QSize m_board_size;
     QColor m_board_bgcolor;
+
+    QGraphicsDropShadowEffect *m_effect;
 
     int m_padding_shadow = 6;
     QPixmap m_pixmap;

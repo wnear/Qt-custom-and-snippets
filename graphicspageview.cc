@@ -6,21 +6,29 @@
 #include <QDebug>
 #include <QCoreApplication>
 
-
-//FIX: when move item, the frame and shadow is out of view, couldn't see.
+// FIX: when move item, the frame and shadow is out of view, couldn't see.
 //
 PageItem::PageItem(QGraphicsItem *parent) : QGraphicsObject(parent) {
     // this->setFlags(QGraphicsItem::ItemIsMovable);
+    // this->setGraphicsEffect();
+    m_effect = new QGraphicsDropShadowEffect;
+    m_effect->setOffset(3);
+    // qDebug()<<m_effect->color();
+    // m_effect->setColor(Qt::black);
+    m_effect->setBlurRadius(20);
+    this->setGraphicsEffect(m_effect);
 }
 
 void PageItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                      QWidget *widget) {
+                     QWidget *widget) {
     painter->drawPixmap(m_pixmap.rect(), m_pixmap);
 
     // line thickness should depend on the scale.
     painter->setPen(QPen(Qt::black, 1 / m_scale));
     painter->drawRect(m_pixmap.rect());
 
+    // draw shadow:
+    if(1) return;
     auto shadow_real = m_padding_shadow / m_scale;
     auto p1 = this->boundingRect().topRight();
     auto p2 = this->boundingRect().bottomRight();
@@ -30,7 +38,8 @@ void PageItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     stops << QGradientStop(1.0, m_board_bgcolor);
 
     QLinearGradient gradient(this->boundingRect().topRight(),
-                             this->boundingRect().topRight() + QPointF(shadow_real, 0));
+                             this->boundingRect().topRight() + QPointF(shadow_real,
+                             0));
     painter->setPen(Qt::NoPen);
     gradient.setStops(stops);
     painter->setBrush(QBrush(gradient));
@@ -41,7 +50,8 @@ void PageItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     painter->drawConvexPolygon(points, 4);
 
     QLinearGradient gradient2(this->boundingRect().bottomLeft(),
-                             this->boundingRect().bottomLeft() + QPointF(0, shadow_real));
+                             this->boundingRect().bottomLeft() + QPointF(0,
+                             shadow_real));
     gradient2.setStops(stops);
     painter->setBrush(QBrush(gradient2));
     QPointF points2[4] = {
@@ -50,6 +60,7 @@ void PageItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     };
     painter->drawConvexPolygon(points2, 4);
 
+    // snippet code to draw a solid rect with black frame.
     // painter->setBrush(Qt::darkGray);
     // painter->drawRect(m_pixmap.rect());
 }
@@ -86,7 +97,6 @@ void PageItem::setImage(const QPixmap &pix) {
     assert(!m_pixmap.isNull());
     emit photoChanged();
 }
-
 
 QRectF PageItem::boundingRect() const { return m_pixmap.rect(); }
 
@@ -172,8 +182,10 @@ void PageView::autoscale() {
     m_scene->setSceneRect(itemsize);
     m_view->resetTransform();
     m_view->scale(s, s);
-    m_scene->update();
+    m_photoItem->update();
+    // m_scene->update();
     m_photoItem->setBoardSize(boardSize());
+    qDebug()<<__PRETTY_FUNCTION__;
 }
 
 void PageView::displayInfo() const {
@@ -187,12 +199,12 @@ void PageView::displayInfo() const {
 
 QSize PageView::boardSize() const {
     return {m_view->contentsRect().width() - 2 * m_padding_leftright,
-            m_view->contentsRect().height() - 2 * m_padding_topbottom
-    };
+            m_view->contentsRect().height() - 2 * m_padding_topbottom};
 }
 void PageView::next() {
     m_index++;
     if (m_index == m_filelist.size()) m_index = 0;
+    qDebug() << "Image:" << m_filelist[m_index].absoluteFilePath();
     m_pixmap = QPixmap::fromImage(QImage(m_filelist[m_index].absoluteFilePath()));
     m_photoItem->setImage(m_pixmap);
     assert(!m_pixmap.isNull());
@@ -201,8 +213,8 @@ void PageView::next() {
 void PageView::prev() {
     m_index--;
     if (m_index == -1) m_index = m_filelist.size() - 1;
+    qDebug() << "Image:" << m_filelist[m_index].absoluteFilePath();
     m_pixmap = QPixmap::fromImage(QImage(m_filelist[m_index].absoluteFilePath()));
     m_photoItem->setImage(m_pixmap);
     assert(!m_pixmap.isNull());
 }
-
