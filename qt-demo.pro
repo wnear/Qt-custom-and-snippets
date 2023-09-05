@@ -10,6 +10,7 @@ CONFIG += debug_and_release
 TEMPLATE = app
 TARGET = qt-demo
 INCLUDEPATH += .
+VERSION = 23.01.04
 
 # You can make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -32,6 +33,7 @@ HEADERS += \
         dataitem.h \
         regex.h \
         youdao.h \
+        struct.h \
 
 
 
@@ -49,3 +51,17 @@ SOURCES += \
         dataitem.cc \
         regex.cc \
         youdao.cc \
+        struct.cc \
+
+# NOTE: how to define the version in the project file and pass it to code.
+# 1. define version in a variable of `.pro`.
+# 2. use `DEFINES` to pass the variable to macro, which can be accessed from the code.
+
+DEFINES += PROGRAM_VERSION=\\\"$$VERSION\\\"
+
+# NOTE: conditional build.
+CONFIG += contest
+CONFIG(contest){
+    DEFINES += PROGRAMX
+}
+
